@@ -30,6 +30,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // 모든 필터 등록은 여기서!!
     public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
         @Override
         public void configure(HttpSecurity http) throws Exception {
@@ -37,6 +38,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new JwtAuthenticationFilter(authenticationManager));
             http.addFilter(new JwtAuthorizationFilter(authenticationManager));
+            http.cors(); // 밑에 설정한 Cors필터를 등록
         }
     }
 
@@ -66,7 +68,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    public CorsConfigurationSource configurationSource() {
+    @Bean
+    public CorsConfigurationSource configurationSource() { // 공식문서 코드
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
