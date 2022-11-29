@@ -38,7 +38,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new JwtAuthenticationFilter(authenticationManager));
             http.addFilter(new JwtAuthorizationFilter(authenticationManager));
-            http.cors(); // 밑에 설정한 Cors필터를 등록
+            // http.cors(null); // 밑에 설정한 Cors필터를 등록
         }
     }
 
@@ -51,7 +51,7 @@ public class SecurityConfig {
         // ExceptionTranslationFilter (인가처리를 하는 과정에서 발생하는 예외처리 필터)
         http.exceptionHandling().authenticationEntryPoint(
                 (request, response, authException) -> {
-                    CustomResponseUtil.fail(response, "권한없음");
+                    CustomResponseUtil.forbidden(response, "권한없음");
                 });
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

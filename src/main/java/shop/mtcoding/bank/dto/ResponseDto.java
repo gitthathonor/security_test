@@ -1,6 +1,5 @@
 package shop.mtcoding.bank.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

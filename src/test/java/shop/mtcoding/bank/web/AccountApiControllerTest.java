@@ -55,7 +55,6 @@ public class AccountApiControllerTest extends DummyEntity {
         AccountSaveReqDto accountSaveReqDto = new AccountSaveReqDto();
         accountSaveReqDto.setNumber(1111L);
         accountSaveReqDto.setPassword("1234");
-        accountSaveReqDto.setOwnerName("쌀");
         String requestBody = om.writeValueAsString(accountSaveReqDto);
         System.out.println("테스트 : " + requestBody);
 
