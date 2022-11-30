@@ -1,5 +1,6 @@
 package shop.mtcoding.bank.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,6 +21,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.bank.config.dummy.DummyEntity;
+import shop.mtcoding.bank.domain.account.Account;
+import shop.mtcoding.bank.domain.account.AccountRepository;
 import shop.mtcoding.bank.domain.user.User;
 import shop.mtcoding.bank.domain.user.UserRepository;
 import shop.mtcoding.bank.dto.AccountReqDto.AccountSaveReqDto;
@@ -42,10 +45,33 @@ public class AccountApiControllerTest extends DummyEntity {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     @BeforeEach
     public void setUp() {
         User ssar = newUser("ssar");
         userRepository.save(ssar);
+        // Account ssarAccount1 = accountRepository.save(newAccount(1111L, ssar));
+        // Account ssarAccount2 = accountRepository.save(newAccount(2222L, ssar));
+    }
+
+    @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @Test
+    public void list_test() throws Exception {
+        // given
+        Long userId = 1L;
+
+        // when
+        ResultActions resultActions = mvc
+                .perform(get("/api/user/" + userId + "/account"));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.data.user.fullName").value("ssar"));
+        resultActions.andExpect(jsonPath("$.data.accounts.[0].balance").value(1000L));
     }
 
     @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)

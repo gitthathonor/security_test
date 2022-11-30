@@ -22,4 +22,12 @@ public class AccountReqDto {
                     .build();
         }
     }
+
+    @Setter
+    @Getter
+    public static class AccountDeleteReqDto {
+        // 서비스 로직을 여기 넣고 싶을 때 사용
+        // private Long userId;
+        private String password;
+    }
 }

@@ -1,5 +1,8 @@
 package shop.mtcoding.bank.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +41,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new JwtAuthenticationFilter(authenticationManager));
             http.addFilter(new JwtAuthorizationFilter(authenticationManager));
-            // http.cors(null); // 밑에 설정한 Cors필터를 등록
+
         }
     }
 
@@ -47,6 +50,8 @@ public class SecurityConfig {
         log.debug("디버그 : SecurityConfig의 filterChain");
         http.headers().frameOptions().disable();
         http.csrf().disable();
+        // 밑에 설정한 Cors필터를 등록
+        http.cors().configurationSource(configurationSource());
 
         // ExceptionTranslationFilter (인가처리를 하는 과정에서 발생하는 예외처리 필터)
         http.exceptionHandling().authenticationEntryPoint(
@@ -68,16 +73,22 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
     public CorsConfigurationSource configurationSource() { // 공식문서 코드
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
+
+        // 메서드 지정해서 허용할 수 있다.
+        // List<String> methods = new ArrayList<>();
+        // methods.add("GET");
+        // methods.add("POST");
+        // configuration.setAllowedMethods(List.of("GET", "POST", "PUT"));
+
         configuration.addAllowedMethod("*");
         configuration.addAllowedOriginPattern("*"); // 프론트 서버의 ip주소, 자바스크립트만 이야기 하는 것이다. 앱이랑은 상관없음
         configuration.setAllowCredentials(true); // 클라이언트에서 쿠키, 인증 관련 헤더
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/api/**", configuration);
 
         return source;
     }

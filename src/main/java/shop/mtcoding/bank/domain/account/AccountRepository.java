@@ -13,4 +13,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
   // inner join
   // mariaDB에서는 true 대신 1이다.
   List<Account> findByActiveUserId(@Param("userId") Long userId);
+
+  @Query("select ac from Account ac where ac.user.id = :userId and ac.isActive = true")
+  List<Account> findByActiveUserIdV2(@Param("userId") Long userId);
+
 }
