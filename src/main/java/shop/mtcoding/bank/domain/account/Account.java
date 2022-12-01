@@ -19,7 +19,7 @@ import shop.mtcoding.bank.config.exception.CustomApiException;
 import shop.mtcoding.bank.domain.AudingTime;
 import shop.mtcoding.bank.domain.user.User;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "account")
 @Entity
@@ -65,8 +65,8 @@ public class Account extends AudingTime {
 
     // 계좌 패스워드 확인
     public void checkPassword(String password) {
-        if(this.password != password) {
-            throw new CustomApiException("계좌 패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST)
+        if (this.password != password) {
+            throw new CustomApiException("계좌 패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -80,5 +80,16 @@ public class Account extends AudingTime {
         isOwner(userId);
         checkPassword(password);
         deActiveAccount();
+    }
+
+    public void 입금하기(Long amount) {
+        this.balance += amount;
+    }
+
+    public void 출금하기(Long amount) {
+        if (balance < amount) {
+            throw new CustomApiException("계좌 잔액이 부족합니다.", HttpStatus.BAD_REQUEST);
+        }
+        this.balance -= amount;
     }
 }
